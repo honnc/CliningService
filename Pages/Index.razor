@@ -1,7 +1,50 @@
 ﻿@page "/"
+@inject ClientService CliServ
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+
+
+<AuthorizeView>
+    <Authorized>
+        <p style="padding-top: 20px; padding-bottom: 20px">Пример вывода данных:</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Имя компании</th>
+                    <th>Адрес</th>
+                    <th>Контактное лицо</th>
+                    <th>Номер телефона</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Clients)
+                {
+                    <tr>
+                        <td>@c.NameCompany</td>
+                        <td>@c.Address</td>
+                        <td>@c.Fioagent</td>
+                        <td>@c.PhoneNumber</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </Authorized>
+    <NotAuthorized>
+        <p class="alert alert-secondary mt-4"><b>Чтобы увидеть данные авторизуйтесь!</b></p>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@*<SurveyPrompt Title="How is Blazor working for you?" />*@
+
+@code{
+    List<Client> Clients;
+    protected override void OnInitialized()
+    {
+        Clients = CliServ.GetClients();
+    }
+
+}

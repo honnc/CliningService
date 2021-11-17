@@ -33,13 +33,33 @@ namespace CleaningServiceWeb
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDbContext<cleaning_serviceContext>(options =>
+                options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDefaultIdentity<IdentityUser>(options => {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;                
+                options.Password.RequiredUniqueChars = 0;             
+                options.Password.RequiredLength = 8;             
+                
+                }
+            )
+            .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
             services.AddDatabaseDeveloperPageExceptionFilter();
+            services.AddSingleton<ClientService>();
             services.AddSingleton<WeatherForecastService>();
+            //services.AddAuthentication()// https://console.developers.google.com/apis/credentials
+            //.AddGoogle(options =>
+            //{
+            //IConfigurationSection googleAuthNSection =
+            //    Configuration.GetSection("Authentication:Google");
+            //         options.ClientId = googleAuthNSection["ClientId"];//dotnet user-secrets set "Authentication:Google:ClientId" "<client-id>"
+            //         options.ClientSecret = googleAuthNSection["ClientSecret"]; //dotnet user - secrets set "Authentication:Google:ClientSecret" "<client-secret>"
+            //     });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
